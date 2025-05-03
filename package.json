@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": "22.12.0"
+  },
   "name": "airbnb",
   "version": "1.0.0",
   "main": "app.js",
@@ -31,9 +34,7 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^8.0.0"
   },
-  "engines": {
-    "node": ">=14.0.0"
-  },
+  
   "devDependencies": {
     "nodemon": "^3.1.9"
   }

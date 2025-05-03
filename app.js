@@ -13,19 +13,11 @@ const listings = require("./routes/listings.js");
 const reviews = require("./routes/review.js");
 const userRoute = require("./routes/users.js");
 const session = require("express-session");
+const MongoStore = require('connect-mongo');
 const passport = require("passport");
 const localStargy = require("passport-local");
 const User= require("./models/user.js"); 
-const sessionOptions={
-    secret: "fppfpsonly", 
-    resave: false, 
-    saveUninitialized: true,
-    cookie: {
-        expires: Date.now() + 3 * 24 * 60 * 60 * 1000,
-        maxAge:3 * 24 * 60 * 60 * 1000,
-        httpOnly:true,
-    }
-}
+
 const flash = require("connect-flash");
 // const {listingSchema,reviewSchema} = require("./schema.js"); 
 // const MONGODB_URI = "mongodb+srv:mohitfpp:wzPdksZi7odEsgiv@cluster0.9avrt0o.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; 
@@ -70,6 +62,31 @@ async function main() {
     }
 }
 
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 3600 ,
+    crypto: {
+        secret: "fppfpsonly",
+    },
+});
+
+store.on("error", function (err) {
+    console.log("SESSION STORE ERROR:", err)});
+
+const sessionOptions={
+    store: store,
+    secret: "fppfpsonly", 
+    resave: false, 
+    saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 3 * 24 * 60 * 60 * 1000,
+        maxAge:3 * 24 * 60 * 60 * 1000,
+        httpOnly:true,
+    }
+};
+
+
+
 app.use(session(sessionOptions));
 app.use(flash());
 
@@ -102,10 +119,7 @@ app.listen(port,() =>{
 
 // app.use(cookieParser("secretcode"));
 
-//homepage route
-// app.get("/",(req,res)=>{
-//     res.render("listings/home.ejs");
-// })
+
 
 //listing/review routes form other folders
 app.use("/listings",listings); 
