@@ -1,51 +1,66 @@
 <% layout("/layouts/boilerPlate")%>
 <body>
     <h1>Weather Forecast for <%= JSON.parse(listing).location %></h1>
-    <div id="weather-info">Loading...</div>
+    <div id="weather-info">
+        <div class="card mb-3" style="max-width: 500px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img id="listing-image" class="img-fluid rounded-start" alt="listing image" style="width: 100%; height: 100%;">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">Current Weather in <span id="location"></span></h5>
+                        <p class="card-text">
+                            Temperature: <span id="temperature"></span>°C<br>
+                            Description: <span id="description"></span><br>
+                            Humidity: <span id="humidity"></span>%<br>
+                            Wind Speed: <span id="wind-speed"></span> m/s
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h2>5-Day Forecast</h2>
+        <div id="forecast"></div>
+    </div>
 
     <script>
-        const city = JSON.parse('<%- listing %>');
+        const city = (<%- listing%> );
         const apiKey = '67b77a58d4362e1f7111826fe9e3a1ff';
         
         async function getWeather() {
             const weatherInfo = document.getElementById('weather-info');
             try {
-                const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city.location}&appid=${apiKey}&units=metric`);
+                const [lon, lat] = city.geometry.coordinates;
+                console.log(lon ,lat);
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response}`);
+                }
+                
                 const data = await response.json();
 
-                let html = `
-                    <div class="card mb-3" style="max-width: 500px;">
-                        <div class="row g-0">
-                            <div class="col-md-4">
-                                <img src="${city.image.url}" class="img-fluid rounded-start" alt="listing image">
-                            </div>
-                            <div class="col-md-8">
-                                <div class="card-body">
-                                    <h5 class="card-title">Current Weather in ${city.location}</h5>
-                                    <p class="card-text">
-                                        Temperature: ${data.list[0].main.temp}°C<br>
-                                        Description: ${data.list[0].weather[0].description}<br>
-                                        Humidity: ${data.list[0].main.humidity}%<br>
-                                        Wind Speed: ${data.list[0].wind.speed} m/s
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <h2>5-Day Forecast</h2>
-                `;
+                // Update current weather
+                document.getElementById('listing-image').src = city.image.url;
+                document.getElementById('location').textContent = city.location;
+                document.getElementById('temperature').textContent = data.list[0].main.temp;
+                document.getElementById('description').textContent = data.list[0].weather[0].description;
+                document.getElementById('humidity').textContent = data.list[0].main.humidity;
+                document.getElementById('wind-speed').textContent = data.list[0].wind.speed;
 
-                for (let i = 0; i < data.list.length; i += 8) {
-                    html += `
+                // Update forecast
+                const forecastHtml = data.list.filter((_, index) => index % 8 === 0)
+                    .map(day => `
                         <div class="forecast-day">
-                            <h3>${new Date(data.list[i].dt * 1000).toDateString()}</h3>
-                            <p>Temperature: ${data.list[i].main.temp}°C</p>
-                            <p>Description: ${data.list[i].weather[0].description}</p>
+                            <h3>${new Date(day.dt * 1000).toDateString()}</h3>
+                            <p>Temperature: ${day.main.temp}°C</p>
+                            <p>Description: ${day.weather[0].description}</p>
                         </div>
-                    `;
-                }
+                    `).join('');
 
-                weatherInfo.innerHTML = html;
+                document.getElementById('forecast').innerHTML = forecastHtml;
+
             } catch (error) {
                 weatherInfo.innerHTML = 'Error fetching weather data. Please try again.';
                 console.error('Error:', error);
