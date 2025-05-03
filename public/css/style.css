@@ -1,0 +1,158 @@
+body{
+    font-family: "Plus Jakarta Sans", sans-serif !important;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh!important;
+}
+
+.container{
+    flex: 1;
+}
+
+
+a{    
+    text-decoration: none !important; 
+}
+
+.navbar-brand{
+    font-size: 2rem !important;
+    color: rgb(163, 40, 40) !important;
+}
+
+li{
+    list-style-type: none;
+}
+
+.fa-brands{
+    color: brown; 
+    font-size: 4rem;
+}
+
+nav{
+    background-color: white ;
+}
+
+nav a{
+    font-weight: 600 !important ; 
+    color: #222222 !important ; 
+}
+
+.finfo{
+    height: 6.9rem;
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.flinks{
+    width: 100%;
+}
+
+.flinks a{
+    
+    color: #e82f2f !important;
+}
+
+.flinks a:hover{
+    text-decoration: underline !important;
+}
+
+.fbrand{
+    width: 100%;
+    font-weight: 600;
+}
+
+
+.card-img-top{
+    width: 100% !important;
+   object-fit: cover !important;
+    /* height: 100%; */
+    border-radius: 1.5rem !important;
+}
+
+.cardlisting{
+    border: none !important;
+    margin-bottom: 3rem;
+}
+
+.card-img-overlay{
+    opacity: 0;
+}
+
+.card-img-overlay:hover{
+       background-color: rgb(246, 247, 244);
+       opacity: .2;
+}
+
+img{
+    border-radius: 1.5rem;
+    height: 20rem;
+      object-fit: cover;
+}
+
+/* .btn-delete{
+background-color: rgb(229, 61, 19);
+color: aliceblue;
+border: none;
+border-radius: .5rem;
+height: 2.6rem;
+} */
+
+.fSocial i{
+    /* margin-right: 1rem; */
+    font-size: 2rem;
+}
+
+.ratingBox{
+    display: flex;
+    justify-content: space-around;
+}
+
+/* map style */
+#map {
+    height: 60vh;
+    }
+
+
+    /* search bar */
+   .search-bar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #ffffff;
+        border-radius: 24px;
+        padding: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        gap: 10px;
+      }
+      
+      .search-input, .date-input,.date-input2, .guests-select {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        width: 150px;
+        outline: none;
+        transition: border-color 0.3s;
+        opacity: .7;
+      }
+      
+      .search-input:focus, .date-input:focus, .guests-select:focus {
+        border-color: #ff5a5f;
+      }
+      
+      .search-button {
+        background-color: #ff5a5f;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      
+      .search-button:hover {
+        background-color: #ff3a3f;
+      }
+      

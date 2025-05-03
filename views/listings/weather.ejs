@@ -1,0 +1,58 @@
+<% layout("/layouts/boilerPlate")%>
+<body>
+    <h1>Weather Forecast for <%= JSON.parse(listing).location %></h1>
+    <div id="weather-info">Loading...</div>
+
+    <script>
+        const city = JSON.parse('<%- listing %>');
+        const apiKey = '67b77a58d4362e1f7111826fe9e3a1ff';
+        
+        async function getWeather() {
+            const weatherInfo = document.getElementById('weather-info');
+            try {
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city.location}&appid=${apiKey}&units=metric`);
+                const data = await response.json();
+
+                let html = `
+                    <div class="card mb-3" style="max-width: 500px;">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="${city.image.url}" class="img-fluid rounded-start" alt="listing image">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">Current Weather in ${city.location}</h5>
+                                    <p class="card-text">
+                                        Temperature: ${data.list[0].main.temp}°C<br>
+                                        Description: ${data.list[0].weather[0].description}<br>
+                                        Humidity: ${data.list[0].main.humidity}%<br>
+                                        Wind Speed: ${data.list[0].wind.speed} m/s
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h2>5-Day Forecast</h2>
+                `;
+
+                for (let i = 0; i < data.list.length; i += 8) {
+                    html += `
+                        <div class="forecast-day">
+                            <h3>${new Date(data.list[i].dt * 1000).toDateString()}</h3>
+                            <p>Temperature: ${data.list[i].main.temp}°C</p>
+                            <p>Description: ${data.list[i].weather[0].description}</p>
+                        </div>
+                    `;
+                }
+
+                weatherInfo.innerHTML = html;
+            } catch (error) {
+                weatherInfo.innerHTML = 'Error fetching weather data. Please try again.';
+                console.error('Error:', error);
+            }
+        }
+        
+        // Call the function when the page loads
+        window.onload = getWeather;
+    </script>
+</body>

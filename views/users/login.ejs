@@ -1,0 +1,15 @@
+<% layout("/layouts/boilerPlate")%>
+<body>
+    <h1 class="col-8 offset-3 mt-3 mb-4">Login 'fake-AirBNB' here:</h1>
+    <div class="row mt-3">
+    <div class="col-6 offset-3">
+        <form action="/login" method="POST" novalidate class="needs-validation">
+            <input type="text" name="username" placeholder="Username" required class="form-control mt-3">
+            <!-- <input type="email" name="email" placeholder="E-mail" required class="form-control mt-3">
+            <div class="invalid-feedback">not a valid mail!</div> -->
+            <input type="password" name="password" placeholder="Password" required class="form-control mt-3">
+            <button class="btn btn-success mt-3">Login</button>
+        </form>
+    </div>
+</div>
+</body>

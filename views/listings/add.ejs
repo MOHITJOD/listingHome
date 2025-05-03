@@ -1,0 +1,47 @@
+
+<% layout("/layouts/boilerPlate")%>
+<body>
+    <h1>Here you can add new property!</h1>
+    <div class="col-8 offset-2">
+    <form method="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">   
+       <br>
+        <div>
+        <input type="text" name="listing[title]" placeholder="Property Name" required class="form-control">
+            <div class="valid-feedback">super title sir!</div>
+            <div class="invalid-feedback">not valid!</div><br><br>
+    </div>
+       <div>
+        <label for="image">Uplode Image</label>
+        <input type="file"  name="listing[image]" class="form-control" required>
+       <br><br>
+    </div>
+        <div>
+                    <textarea  placeholder="Description" name="listing[description]" required class="form-control"></textarea>
+                    <div class="valid-feedback">super sir super! description</div>
+                    <div class="invalid-feedback">not valid!</div><br><br>
+        </div>
+        
+       <div>
+        <input type="text" placeholder="Property Location" name="listing[location]" required class="form-control">
+        <div class="valid-feedback">super sir super! Location</div>
+                    <div class="invalid-feedback">not valid!</div><br><br>
+    </div>
+
+    <div class="row" >
+    <div class="col-md-4">
+        <input type="number" name="listing[price]" placeholder="Price" required class="form-control">
+        <div class="valid-feedback">super sir super! Price</div>
+        <div class="invalid-feedback">not valid!</div><br><br>
+    </div>
+    <div class="col-md-8">
+        <input type="text" placeholder="Country" name="listing[country]" required class="form-control">
+        <div class="valid-feedback">super sir super! Country</div>
+                    <div class="invalid-feedback">not valid!</div><br><br>
+    </div>
+</div>
+        <button type="submit" class="btn btn-outline-success">Submit</button>
+        <br>
+        <br>
+    </form></div>
+</body>
+                 
