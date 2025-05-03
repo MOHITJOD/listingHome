@@ -3,10 +3,14 @@ body{
     display: flex;
     flex-direction: column;
     min-height: 100vh!important;
+ 
+  
 }
 
 .container{
     flex: 1;
+    
+ ;
 }
 
 
@@ -74,6 +78,7 @@ nav a{
 .cardlisting{
     border: none !important;
     margin-bottom: 3rem;
+   
 }
 
 .card-img-overlay{

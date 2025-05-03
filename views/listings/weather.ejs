@@ -1,8 +1,11 @@
 <% layout("/layouts/boilerPlate")%>
 <body>
+  
     <h1>Weather Forecast for <%= JSON.parse(listing).location %></h1>
+    
     <div id="weather-info">
-        <div class="card mb-3" style="max-width: 500px;">
+        <div class="card mb-3 offset-3" style="max-width: 500px;">
+           
             <div class="row g-0">
                 <div class="col-md-4">
                     <img id="listing-image" class="img-fluid rounded-start" alt="listing image" style="width: 100%; height: 100%; border-radius: .5rem;">
@@ -46,7 +49,7 @@
                 document.getElementById('listing-image').src = city.image.url;
                 document.getElementById('location').textContent = city.location;
                 document.getElementById('temperature').textContent = data.list[0].main.temp;
-                document.getElementById('description').textContent = data.list[0].weather[0].description;
+                document.getElementById('description').textContent = data.list[0].weather[0].description.toUpperCase();
                 document.getElementById('humidity').textContent = data.list[0].main.humidity;
                 document.getElementById('wind-speed').textContent = data.list[0].wind.speed;
 
@@ -85,7 +88,7 @@
             .slice(0, 5) // Limit to 5 days
             .map(day => `
                 <div class="col-md-4 mb-4">
-                    <div class="card text-bg-light" style="max-width: 18rem;">
+                    <div class="card border-info mb-3" style="max-width: 18rem;">
                         <div class="card-header">
                         <b>    
                         ${day.date.toLocaleDateString("en-US", {
@@ -97,7 +100,7 @@
                           </b>
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title"><b>${day.description}</b></h5>
+                            <h5 class="card-title"><b>${day.description.toUpperCase()}</b></h5>
                             <hr>
                             <p class="card-text">
                                 Min Temperature: <b>${day.minTemp.toFixed(1)}°C</b><br>
