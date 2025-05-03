@@ -66,7 +66,7 @@ const store = MongoStore.create({
     mongoUrl: dbUrl,
     touchAfter: 24 * 3600 ,
     crypto: {
-        secret: "fppfpsonly",
+        secret:process.env.SECRET,
     },
 });
 
@@ -75,7 +75,7 @@ store.on("error", function (err) {
 
 const sessionOptions={
     store: store,
-    secret: "fppfpsonly", 
+    secret: process.env.SECRET, 
     resave: false, 
     saveUninitialized: true,
     cookie: {
@@ -103,14 +103,11 @@ app.use((req,res,next)=>{
     next();
 })
 
-// app.get("/demo",async(req,res)=>{
-//     let fake = new User({
-//         email:"fake@gmail.com",
-//         username:"fakeuser",
-// })
-// let reg = await User.register(fake,"fakepassword");
-// res.send(reg);
-// })
+app.get('/', (req, res) => {
+    res.redirect('/listings');
+  });
+  
+
 
 //port setup
 app.listen(port,() =>{
@@ -131,17 +128,6 @@ app.get("/weather", (req, res) => {
     res.render("listings/weather");
 });
 
-//cookie prectice 
-// app.get("/Set",(req,res)=>{
-//     res.cookie("name", "Mohit",{signed:true});
-//     res.send(`hi`);
-// }
-// )
-// app.get("/cookies",(req,res)=>{
-//     let {name ="anonumes"} = req.signedCookies;
-//     res.send(`hi ${name}!`);
-// }
-// )
 
 //error handling middleware
 app.all(/.*/, (req, res, next) => {
