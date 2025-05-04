@@ -7,7 +7,7 @@ module.exports.isLog=(req,res,next)=>{
     // console.log(req);
     if(!req.isAuthenticated()){
         req.session.redirectUrl = req.originalUrl;
-        req.flash("error","Must login first baby!");
+        req.flash("error","Must login first sir!");
        return res.redirect("/login");
     }next();
 }
@@ -54,7 +54,7 @@ module.exports.reviewOwner = async(req,res,next)=>{
     let {id, reviewId} = req.params;
     let review = await Review.findById(reviewId);
     if(!review.postBy.equals(res.locals.currUser._id)){
-        req.flash("error","got you its not yours!")
+        req.flash("error","Gotcha, review not yours!")
         return res.redirect(`/listings/${id}`);
     }
     next();
