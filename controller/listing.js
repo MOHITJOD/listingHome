@@ -21,7 +21,7 @@ module.exports.allListings = async (req,res)=>{
        let {id}= req.params;
        const listing =await Listing.findById(id).populate({path:"reviews",populate:{path:"postBy"}}).populate("owner");
        if(!listing){
-        req.flash("error","listing not exist baby!");
+        req.flash("error","listing not exist sir!");
         return res.redirect("/listings");
        }
        res.render("listings/show.ejs",{listing});
@@ -49,7 +49,7 @@ module.exports.allListings = async (req,res)=>{
         newList.image = {url,filename};
         await newList.save();
         console.log(newList);
-        req.flash("success","listing added smoothly baby!");
+        req.flash("success","listing added smoothly sir!");
         res.redirect("/listings");
      }
    
@@ -58,7 +58,7 @@ module.exports.allListings = async (req,res)=>{
         let {id}= req.params;
         const listing = await Listing.findById(id);
         if(!listing){
-            req.flash("error","listing not exist baby!");
+            req.flash("error","listing not exist sir!");
             return res.redirect("/listings");
            }
         res.render("listings/edit.ejs",{listing});
@@ -70,7 +70,7 @@ module.exports.allListings = async (req,res)=>{
             let listing = await Listing.findById(id);
             
             if (!listing) {
-                req.flash("error", "Listing not found!");
+                req.flash("error", "Listing not found sir!");
                 return res.redirect("/listings");
             }
 
@@ -94,7 +94,7 @@ module.exports.allListings = async (req,res)=>{
 
             // Save the updated listing
             await listing.save();
-            req.flash("success", "Listing edited smoothly baby!");
+            req.flash("success", "Listing edited smoothly sir!");
             res.redirect(`/listings/${id}`);
         } catch (error) {
             console.error("Error updating listing:", error);
@@ -108,7 +108,7 @@ module.exports.allListings = async (req,res)=>{
         let {id}= req.params;
        let deleted = await Listing.findByIdAndDelete(id);
         console.log(deleted);
-        req.flash("success","listing deleted smoothly baby!");
+        req.flash("success","listing deleted smoothly sir!");
         res.redirect("/listings");
     }
 
@@ -117,7 +117,7 @@ module.exports.allListings = async (req,res)=>{
         let {id} = req.params;
         let listing = await Listing.findById(id);
         if(!listing){
-            req.flash("error","listing not exist baby!");
+            req.flash("error","listing not exist sir!");
             return res.redirect("/listings");
         }
         res.render("listings/weather.ejs",{ listing: JSON.stringify(listing) });
