@@ -14,15 +14,8 @@ const reviews = require("./routes/review.js");
 const userRoute = require("./routes/users.js");
 const session = require("express-session");
 const MongoStore = require('connect-mongo');
-const passport = require("passport");
-const localStargy = require("passport-local");
-const User= require("./models/user.js"); 
-
+const User = require("./models/user.js"); 
 const flash = require("connect-flash");
-// const {listingSchema,reviewSchema} = require("./schema.js"); 
-// const MONGODB_URI = "mongodb+srv:mohitfpp:wzPdksZi7odEsgiv@cluster0.9avrt0o.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; 
-// const Listing = require("./models/listing.js");
-// const Review = require("./models/reviews.js");
 
 app.use(express.urlencoded({ extended : true }));
 app.use(methodOverride("_method"));
@@ -39,7 +32,7 @@ async function main() {
     } catch (err) {
         console.log("Error in mongoose.connect:");
         console.log(err);
-        throw err; // Rethrow the error to be handled by the caller
+        throw err;
     }
 }
 
@@ -50,91 +43,78 @@ main().then(()=>{
     console.log(err);
 })
 
-//connect to MongoDB
-async function main() {
-    try {
-        await mongoose.connect(dbUrl);
-        console.log("MongoDB URL being used:", dbUrl);
-    } catch (err) {
-        console.log("Error in mongoose.connect:");
-        console.log(err);
-        throw err;
-    }
-}
-
 const store = MongoStore.create({
     mongoUrl: dbUrl,
-    touchAfter: 24 * 3600 ,
+    touchAfter: 24 * 3600,
     crypto: {
-        secret:process.env.SECRET,
+        secret: process.env.SECRET,
     },
 });
 
 store.on("error", function (err) {
-    console.log("SESSION STORE ERROR:", err)});
+    console.log("SESSION STORE ERROR:", err)
+});
 
-const sessionOptions={
+const sessionOptions = {
     store: store,
     secret: process.env.SECRET, 
     resave: false, 
     saveUninitialized: true,
     cookie: {
         expires: Date.now() + 3 * 24 * 60 * 60 * 1000,
-        maxAge:3 * 24 * 60 * 60 * 1000,
-        httpOnly:true,
+        maxAge: 3 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
     }
 };
-
-
 
 app.use(session(sessionOptions));
 app.use(flash());
 
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new localStargy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
-app.use((req,res,next)=>{
-    res.locals.success= req.flash("success");
-    res.locals.error= req.flash("error");
-    res.locals.currUser = req.user; 
+// Middleware to make user available in templates
+app.use(async (req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    
+    // If we have a user in session, convert it back to a Mongoose document
+    if (req.session.user) {
+        try {
+            const user = await User.findById(req.session.user._id);
+            res.locals.currUser = user;
+        } catch (err) {
+            console.log("Error finding user:", err);
+            res.locals.currUser = null;
+        }
+    } else {
+        res.locals.currUser = null;
+    }
+    
     next();
-})
+});
 
 app.get('/', (req, res) => {
     res.redirect('/listings');
-  });
-  
-
+});
 
 //port setup
 app.listen(port,() =>{
     console.log(`Server is running on port ${port}`);
 });
 
-// app.use(cookieParser("secretcode"));
-
-
-
 //listing/review routes form other folders
-app.use("/listings",listings); 
-app.use("/listings/:id/review",reviews);
-
-app.use("/",userRoute);
+app.use("/listings", listings); 
+app.use("/listings/:id/review", reviews);
+app.use("/", userRoute);
 
 app.get("/weather", (req, res) => {
     res.render("listings/weather");
 });
 
-
 //error handling middleware
 app.all(/.*/, (req, res, next) => {
- next(new ExpressError(404,"Page Not Found"));
+    next(new ExpressError(404, "Page Not Found"));
 });
 
-app.use((err,req,res,next)=>{
-let {status=500,message="something went wrong!"}=err;
- res.status(status).render("listings/error.ejs",{message});
+app.use((err, req, res, next) => {
+    let {status = 500, message = "something went wrong!"} = err;
+    res.status(status).render("listings/error.ejs", {message});
 });

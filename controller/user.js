@@ -6,42 +6,57 @@ const User= require("../models/user.js");
 module.exports.createUserPage = (req,res)=>{
     res.render("users/signup.ejs");
 }
-
-module.exports.createUser =  async (req,res)=>{
-    try{let {username,email,password} = req.body;
-    const newU = new User ({email, username}); 
-   const registered = await User.register(newU,password);
-    console.log(registered);
-    req.login(registered,(err)=>{
-        if(err){
-            return next(err);
-        }
-        req.flash("success","Account created successfully sir!");
-    res.redirect("/listings");
-    })
+//signup
+module.exports.createUser = async (req,res)=>{
+    try{
+        let {username, email, password} = req.body;
+        const newUser = new User({email, username, password}); 
+        await newUser.save();
+        req.flash("success", "Account created successfully!");
+        res.redirect("/listings");
     }
     catch(e){
-        req.flash("error","User account already exists, try to login sir!");
+        req.flash("error", "User account already exists, try to login!");
         res.redirect("/signup") 
     }
 }
-
+//login
 module.exports.logPage = (req,res)=>{
     res.render("listings/home.ejs")
 }
-
-module.exports.logUser= async(req,res)=>{
-    req.flash("success","Welcome back to the fake-AirBNB noob i mean sir!");
-    let redirectUrl = res.locals.redirectUrl || "/listings";
-    res.redirect(redirectUrl);
-}
-
-module.exports.logOut = (req,res,next)=>{
-    req.logout((err)=>{
-        if(err){
-            return next(err);
+//login
+module.exports.logUser = async(req,res)=>{
+    try {
+        const {username, password} = req.body;
+        const user = await User.findOne({username});
+        
+        if(!user || user.password !== password) {
+            req.flash("error", "Invalid username or password!");
+            return res.redirect("/login");
         }
-        req.flash("success","Bye bye sir! LoggedOut!");
+        
+        // Convert Mongoose document to plain object for session storage
+        const userObj = user.toObject();
+        req.session.user = userObj;
+        
+        req.flash("success", "Welcome back!");
+        let redirectUrl = res.locals.redirectUrl || "/listings";
+        res.redirect(redirectUrl);
+    } catch(e) {
+        req.flash("error", "Something went wrong!");
+        res.redirect("/login");
+    }
+}
+//logout
+module.exports.logOut = (req,res)=>{
+    // Set flash message before destroying session
+    req.flash("success", "Logged out successfully!");
+    
+    // Clear the session
+    req.session.destroy((err) => {
+        if(err) {
+            console.log("Error destroying session:", err);
+        }
         res.redirect("/listings");
-    })
+    });
 }
