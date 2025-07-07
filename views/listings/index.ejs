@@ -3,14 +3,13 @@
 #filters{
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    
 }
 .filters{
     text-align: center;
     margin-top: 1rem;
     margin-left: 1rem;
     opacity: .7;
-   
 }
 .filters i{
     font-size:1.5rem;
@@ -22,28 +21,6 @@
     opacity: 1;
     cursor: pointer;
 }   
-.filterIcon{
-  margin-left: 4rem;
-  border: 1px lightgray solid;
-  border-radius: 10px;
-  width: 5.6rem;
-  height: 3.1rem;
-  text-align: center;
-  align-items: center;
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-font-size: smaller;
-cursor: pointer;
-}
-.price{
-margin-left: .4rem;
-  padding: 1rem;
-  font-weight: 600;
-}
-.price i{
-  font-size: 1.2rem;
-}
 </style>
 <body>
    <div id="filters">
@@ -97,14 +74,10 @@ margin-left: .4rem;
        </div>
        <div class="filters">
         <div><i class="fa-solid fa-sailboat"></i></div>
-         <p>Boat</p>
+         <p>  Boat</p>
        </div>
-       <div class="filterIcon">
-        <a><i class="fa-solid fa-sliders" style="margin-right: 4px;"></i>Filters</a>
-       </div>
-       <div class="price"><i class="fa-solid fa-tag"></i>Prices include all fees</div>
+       
    </div>
-   
 
         <div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1">
             <%for(let list of allListing){%>

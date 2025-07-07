@@ -3,14 +3,10 @@ body{
     display: flex;
     flex-direction: column;
     min-height: 100vh!important;
- 
-  
 }
 
 .container{
     flex: 1;
-    
- ;
 }
 
 
@@ -29,7 +25,7 @@ li{
 
 .fa-brands{
     color: brown; 
-    font-size: 3rem;
+    font-size: 4rem;
 }
 
 nav{
@@ -78,7 +74,6 @@ nav a{
 .cardlisting{
     border: none !important;
     margin-bottom: 3rem;
-   
 }
 
 .card-img-overlay{

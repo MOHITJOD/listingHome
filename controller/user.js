@@ -16,12 +16,12 @@ module.exports.createUser =  async (req,res)=>{
         if(err){
             return next(err);
         }
-        req.flash("success","Account created successfully sir!");
+        req.flash("success","Account created successfully!");
     res.redirect("/listings");
     })
     }
     catch(e){
-        req.flash("error","User account already exists, try to login sir!");
+        req.flash("error","User account already exists, try to login!");
         res.redirect("/signup") 
     }
 }
@@ -31,7 +31,7 @@ module.exports.logPage = (req,res)=>{
 }
 
 module.exports.logUser= async(req,res)=>{
-    req.flash("success","Welcome back to the fake-AirBNB noob i mean sir!");
+    req.flash("success","Welcome back to the fake-AirBNB noob!");
     let redirectUrl = res.locals.redirectUrl || "/listings";
     res.redirect(redirectUrl);
 }
@@ -41,7 +41,7 @@ module.exports.logOut = (req,res,next)=>{
         if(err){
             return next(err);
         }
-        req.flash("success","Bye bye sir! LoggedOut!");
+        req.flash("success","Bye bye baby! LoggedOut!");
         res.redirect("/listings");
     })
 }

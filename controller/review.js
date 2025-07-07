@@ -16,7 +16,7 @@ module.exports.reviewPost = async (req,res)=>{
    let rev = await review.save();
     await listing.save();
     console.log("review saved",rev);
-    req.flash("success","review added smoothly sir!");
+    req.flash("success","review added smoothly baby!");
     res.redirect(`/listings/${id}`);
 }
 
@@ -24,6 +24,6 @@ module.exports.reviewDelete = async (req,res)=>{
     let {id,reviewId}= req.params;
 await Listing.findByIdAndUpdate(id,{$pull:{reviews: reviewId}});
 await Review.findByIdAndDelete(reviewId);
-req.flash("success","review deleted smoothly sir!");
+req.flash("success","review deleted smoothly baby!");
     res.redirect(`/listings/${id}`);
 }
