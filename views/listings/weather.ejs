@@ -1,38 +1,42 @@
 <% layout("/layouts/boilerPlate")%>
 <body>
+  
     <h1>Weather Forecast for <%= JSON.parse(listing).location %></h1>
+    
     <div id="weather-info">
-        <div class="card mb-3" style="max-width: 500px;">
+        <div class="card mb-3 offset-3" style="max-width: 500px;">
+           
             <div class="row g-0">
                 <div class="col-md-4">
-                    <img id="listing-image" class="img-fluid rounded-start" alt="listing image" style="width: 100%; height: 100%;">
+                    <img id="listing-image" class="img-fluid rounded-start" alt="listing image" style="width: 100%; height: 100%; border-radius: .5rem;">
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 class="card-title">Current Weather in <span id="location"></span></h5>
+                        <h5 class="card-title">Current Weather in <b><span id="location"></span></b></h5>
+                        <hr>
                         <p class="card-text">
-                            Temperature: <span id="temperature"></span>°C<br>
-                            Description: <span id="description"></span><br>
-                            Humidity: <span id="humidity"></span>%<br>
-                            Wind Speed: <span id="wind-speed"></span> m/s
+                            Temperature: <b><span id="temperature"></span>°C</b><br>
+                            condition: <b><span id="description"></span></b><br>
+                            Humidity:<b> <span id="humidity"></span>%</b><br>
+                            Wind Speed:<b> <span id="wind-speed"></span> m/s</b>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-        <h2>5-Day Forecast</h2>
+        <hr>
+        <h1>Next 5-Days Forecast</h1>
         <div id="forecast"></div>
     </div>
 
     <script>
-        const city = (<%- listing%> );
+        const city = (<%- listing%>);
         const apiKey = '67b77a58d4362e1f7111826fe9e3a1ff';
-        
         async function getWeather() {
             const weatherInfo = document.getElementById('weather-info');
             try {
                 const [lon, lat] = city.geometry.coordinates;
-                console.log(lon ,lat);
+                console.log(lon, lat);
                 const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
                 
                 if (!response.ok) {
@@ -40,24 +44,76 @@
                 }
                 
                 const data = await response.json();
-
+                console.log(data);
                 // Update current weather
                 document.getElementById('listing-image').src = city.image.url;
                 document.getElementById('location').textContent = city.location;
                 document.getElementById('temperature').textContent = data.list[0].main.temp;
-                document.getElementById('description').textContent = data.list[0].weather[0].description;
+                document.getElementById('description').textContent = data.list[0].weather[0].description.toUpperCase();
                 document.getElementById('humidity').textContent = data.list[0].main.humidity;
                 document.getElementById('wind-speed').textContent = data.list[0].wind.speed;
 
-                // Update forecast
-                const forecastHtml = data.list.filter((_, index) => index % 8 === 0)
-                    .map(day => `
-                        <div class="forecast-day">
-                            <h3>${new Date(day.dt * 1000).toDateString()}</h3>
-                            <p>Temperature: ${day.main.temp}°C</p>
-                            <p>Description: ${day.weather[0].description}</p>
+                // Process forecast data
+                const today = new Date().setHours(0, 0, 0, 0);
+                const forecastData = data.list.reduce((acc, item) => {
+                    const itemDate = new Date(item.dt * 1000).setHours(0, 0, 0, 0);
+                    if (itemDate > today) {
+                        const dateString = new Date(itemDate).toDateString();
+                        if (!acc[dateString]) {
+                            acc[dateString] = {
+                                date: new Date(itemDate),
+                                minTemp: Infinity,  // Initialize with a high value
+                                maxTemp: -Infinity, // Initialize with a low value
+                                temps: [],  // Store all temperatures for the day
+                                description: item.weather[0].description,
+                                humidity: item.main.humidity,
+                            };
+                        }
+                        // Update min and max for every data point
+                        acc[dateString].minTemp = Math.min(acc[dateString].minTemp, item.main.temp_min, item.main.temp);
+                        acc[dateString].maxTemp = Math.max(acc[dateString].maxTemp, item.main.temp_max, item.main.temp);
+                        acc[dateString].temps.push(item.main.temp);
+                        // Update description to the most common one for the day
+                        if (acc[dateString].temps.length % 4 === 0) {  // Update every 4 data points (roughly once a day)
+                            acc[dateString].description = item.weather[0].description;
+                        }
+                    }
+                    return acc;
+                }, {});
+
+                // Generate forecast HTML
+                const forecastHtml = `
+    <div class="row">
+        ${Object.values(forecastData)
+            .slice(0, 5) // Limit to 5 days
+            .map(day => `
+                <div class="col-md-4 mb-4">
+                    <div class="card border-info mb-3" style="max-width: 18rem;">
+                        <div class="card-header">
+                        <b>    
+                        ${day.date.toLocaleDateString("en-US", {
+                        weekday: "long",
+                           year: "numeric",
+                           month: "long",
+                           day: "numeric"
+                         })}
+                          </b>
                         </div>
-                    `).join('');
+                        <div class="card-body">
+                            <h5 class="card-title"><b>${day.description.toUpperCase()}</b></h5>
+                            <hr>
+                            <p class="card-text">
+                                Min Temperature: <b>${day.minTemp.toFixed(1)}°C</b><br>
+                                Max Temperature: <b>${day.maxTemp.toFixed(1)}°C</b><br>
+                                Humidity: <b>${day.humidity}%</b>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+    </div>
+`;
+
 
                 document.getElementById('forecast').innerHTML = forecastHtml;
 
