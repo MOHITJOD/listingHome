@@ -7,17 +7,25 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const port = process.env.PORT || 3000;
-const dbUrl = process.env.ATLASDB_URL;
+const dbUrl = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/airbnb";
 const cookieParser = require("cookie-parser");
 const listings = require("./routes/listings.js"); 
 const reviews = require("./routes/review.js");
 const userRoute = require("./routes/users.js");
 const session = require("express-session");
-const MongoStore = require('connect-mongo');
 const passport = require("passport");
 const localStargy = require("passport-local");
 const User= require("./models/user.js"); 
-
+const sessionOptions={
+    secret: "fppfpsonly", 
+    resave: false, 
+    saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 3 * 24 * 60 * 60 * 1000,
+        maxAge:3 * 24 * 60 * 60 * 1000,
+        httpOnly:true,
+    }
+}
 const flash = require("connect-flash");
 // const {listingSchema,reviewSchema} = require("./schema.js"); 
 // const MONGODB_URI = "mongodb+srv:mohitfpp:wzPdksZi7odEsgiv@cluster0.9avrt0o.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; 
@@ -62,31 +70,6 @@ async function main() {
     }
 }
 
-const store = MongoStore.create({
-    mongoUrl: dbUrl,
-    touchAfter: 24 * 3600 ,
-    crypto: {
-        secret:process.env.SECRET,
-    },
-});
-
-store.on("error", function (err) {
-    console.log("SESSION STORE ERROR:", err)});
-
-const sessionOptions={
-    store: store,
-    secret: process.env.SECRET, 
-    resave: false, 
-    saveUninitialized: true,
-    cookie: {
-        expires: Date.now() + 3 * 24 * 60 * 60 * 1000,
-        maxAge:3 * 24 * 60 * 60 * 1000,
-        httpOnly:true,
-    }
-};
-
-
-
 app.use(session(sessionOptions));
 app.use(flash());
 
@@ -103,11 +86,14 @@ app.use((req,res,next)=>{
     next();
 })
 
-app.get('/', (req, res) => {
-    res.redirect('/listings');
-  });
-  
-
+// app.get("/demo",async(req,res)=>{
+//     let fake = new User({
+//         email:"fake@gmail.com",
+//         username:"fakeuser",
+// })
+// let reg = await User.register(fake,"fakepassword");
+// res.send(reg);
+// })
 
 //port setup
 app.listen(port,() =>{
@@ -116,7 +102,10 @@ app.listen(port,() =>{
 
 // app.use(cookieParser("secretcode"));
 
-
+//homepage route
+// app.get("/",(req,res)=>{
+//     res.render("listings/home.ejs");
+// })
 
 //listing/review routes form other folders
 app.use("/listings",listings); 
@@ -128,6 +117,17 @@ app.get("/weather", (req, res) => {
     res.render("listings/weather");
 });
 
+//cookie prectice 
+// app.get("/Set",(req,res)=>{
+//     res.cookie("name", "Mohit",{signed:true});
+//     res.send(`hi`);
+// }
+// )
+// app.get("/cookies",(req,res)=>{
+//     let {name ="anonumes"} = req.signedCookies;
+//     res.send(`hi ${name}!`);
+// }
+// )
 
 //error handling middleware
 app.all(/.*/, (req, res, next) => {

@@ -1,5 +1,4 @@
 <% layout("/layouts/boilerPlate")%>
-
 <script>
     const mapToken = "<%= process.env.MAP_TOKEN %>";
     const cordinate = <%- JSON.stringify(listing) %> ;
@@ -87,10 +86,9 @@
 <hr>
 </div>
 <div class="col-8 offset-2">
-<h2>Where you'll be:</h2>
-<h4><%= listing.location %></h4>
+<h2>Where you will be:</h2>
 <div id="map"></div>
 </div>
-<div class="col-12 offset-3 mt-3 mb-3"><a href="/listings/<%=listing._id%>/weather" class="btn btn-outline-primary col-6">See Weather Forcast for your trip location</a></div>
+<div class="col-8 offset-2 mt-3 mb-3"><a href="/listings/<%=listing._id%>/weather" class="btn btn-outline-primary col-6">See Weather Forcast Data for your trip location</a></div>
 <script src="/js/map.js"></script>
 </body>
